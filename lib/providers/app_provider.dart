@@ -7,7 +7,7 @@ class AppProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     final bool isDark = prefs.getBool('isDark') ?? false;
     await prefs.setBool('isDark', !isDark);
-    this.isDark = isDark;
+    this.isDark = !isDark;
     notifyListeners();
   }
 

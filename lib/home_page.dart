@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tasks_app/add_task.dart';
 import 'package:tasks_app/models/task_model.dart';
+import 'package:tasks_app/providers/add_task_provider.dart';
 import 'package:tasks_app/providers/app_provider.dart';
 import 'package:tasks_app/providers/task_provider.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  TaskModel? get task => null;
-
-  int? get index => null;
 
   @override
   Widget build(BuildContext context) {
@@ -48,19 +45,23 @@ class HomePage extends StatelessWidget {
             padding: EdgeInsetsGeometry.all(12),
             child: Consumer<TaskProvider>(
               builder: (context, value, child) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddTask(task: task, index: index),
-                      ),
-                    );
-                  },
-                  child: ListView.separated(
-                    itemBuilder: (context, index) {
-                      final task = taskprovider.tasks[index];
-                      return Container(
+                return ListView.separated(
+                  itemBuilder: (context, index) {
+                    final task = taskprovider.tasks[index];
+                    return GestureDetector(
+                      onTap: () async {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                AddTask(task: task, index: index),
+                          ),
+                        );
+                        if (result != null && result) {
+                          taskprovider.getTasks();
+                        }
+                      },
+                      child: Container(
                         padding: EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: Color(task.color),
@@ -108,11 +109,11 @@ class HomePage extends StatelessWidget {
                             ),
                           ],
                         ),
-                      );
-                    },
-                    separatorBuilder: (context, index) => SizedBox(height: 15),
-                    itemCount: taskprovider.tasks.length,
-                  ),
+                      ),
+                    );
+                  },
+                  separatorBuilder: (context, index) => SizedBox(height: 15),
+                  itemCount: taskprovider.tasks.length,
                 );
               },
             ),

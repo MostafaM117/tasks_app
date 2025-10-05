@@ -47,6 +47,20 @@ class AddTaskProvider extends ChangeNotifier {
       titlecontroller.text = task.title;
       descriptioncontroller.text = task.description;
       selectedColor = colors.indexWhere((color) => color.value == task.color);
+      notifyListeners();
+      print("data should be filled");
     }
+  }
+
+  void updateTask(BuildContext context, TaskModel task, int index) async {
+    final box = await Hive.openBox<TaskModel>('tasksBox');
+    final updatedTask = TaskModel(
+      title: titlecontroller.text,
+      description: descriptioncontroller.text,
+      createdAt: task.createdAt,
+      color: colors[selectedColor].value,
+    );
+    await box.putAt(index, updatedTask);
+    Navigator.pop(context, true);
   }
 }

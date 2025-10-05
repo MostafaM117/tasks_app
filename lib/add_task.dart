@@ -14,11 +14,11 @@ class AddTask extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => AddTaskProvider()..fillData(task),
       builder: (context, child) {
-        final addtaskprovider = context.read<AddTaskProvider>();
+        final addtaskprovider = context.watch<AddTaskProvider>();
         return Scaffold(
           appBar: AppBar(
             title: Text(
-              'Add a new task',
+              task != null ? "Edit task" : "Add a new task",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
@@ -86,7 +86,7 @@ class AddTask extends StatelessWidget {
                                   (index) {
                                     return GestureDetector(
                                       onTap: () {
-                                        value.changeColor(index);
+                                        addtaskprovider.changeColor(index);
                                       },
                                       child: CircleAvatar(
                                         backgroundColor:
@@ -127,10 +127,14 @@ class AddTask extends StatelessWidget {
                     ),
                     onPressed: () {
                       if (addtaskprovider.formkey.currentState!.validate()) {
-                        addtaskprovider.addTask(context);
+                        if (task != null) {
+                          addtaskprovider.updateTask(context, task!, index!);
+                        } else {
+                          addtaskprovider.addTask(context);
+                        }
                       }
                     },
-                    child: Text("Add Task"),
+                    child: Text(task != null ? "Update Task" : "Add Task"),
                   ),
                 ],
               ),
